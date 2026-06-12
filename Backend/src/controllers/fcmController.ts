@@ -3,7 +3,8 @@ import { AppDataSource } from "../config/data-source";
 import { DeviceToken } from "../entity/DeviceToken";
 
 export const registerToken = async (req: Request, res: Response) => {
-  const { userId, token } = req.body;
+    const userId = (req as any).user?.id;
+  const { token } = req.body;
 
   const repo = AppDataSource.getRepository(DeviceToken);
 
