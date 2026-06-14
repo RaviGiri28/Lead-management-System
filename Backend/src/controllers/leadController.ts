@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { AppDataSource } from "../config/data-source";
 import { Lead } from "../entity/Lead";
 import { Like } from "typeorm";
+import { DeviceToken } from "../entity/DeviceToken";
+import { sendNotification } from "../utils/sendNotification";
+import { Notification } from "../entity/Notification";
 
 const leadRepository = AppDataSource.getRepository(Lead);
 
@@ -27,6 +30,28 @@ export const createLead = async (
     });
 
     const savedLead = await leadRepository.save(lead);
+    const notificationRepo = AppDataSource.getRepository(Notification);
+    await notificationRepo.save({
+      title: "New Lead Received",
+      message: `${savedLead.name} came from ${savedLead.source}`,
+      read: false,
+    });
+    const tokenRepo = AppDataSource.getRepository(DeviceToken);
+    const devices = await tokenRepo.find();
+    console.log('device logged', devices);
+      try {
+        await Promise.all(
+          devices.map(device =>
+            sendNotification(
+              device.token,
+              "New Lead Received",
+              `${savedLead.name} came from ${savedLead.source}`
+            )
+          )
+        );
+      } catch (error) {
+        console.error("Notification failed:", error);
+      }
 
     res.status(201).json({
       success: true,
@@ -48,21 +73,46 @@ export const getLeads = async (
   res: Response
 ): Promise<void> => {
   try {
-    const {
-      search,
-      source,
-      status,
-    } = req.query;
+    const { search, source, status } = req.query;
 
     const whereCondition: any = {};
 
-    // Source Filter
+    const allowedSources = [
+      "Meta Ads",
+      "Google Ads",
+    ];
+
+    const allowedStatuses = [
+      "New",
+      "Contacted",
+      "Qualified",
+      "Lost",
+      "Converted",
+    ];
+
+    // Source Validation
     if (source) {
+      if (!allowedSources.includes(source as string)) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid source",
+        });
+        return;
+      }
+
       whereCondition.source = source;
     }
 
-    // Status Filter
+    // Status Validation
     if (status) {
+      if (!allowedStatuses.includes(status as string)) {
+        res.status(400).json({
+          success: false,
+          message: "Invalid status",
+        });
+        return;
+      }
+
       whereCondition.status = status;
     }
 
@@ -118,6 +168,7 @@ export const getLeads = async (
     });
   }
 };
+
 export const getLeadById = async (
   req: Request,
   res: Response

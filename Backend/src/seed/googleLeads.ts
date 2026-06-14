@@ -3,14 +3,14 @@ export const googleLeads = [
     name: "Priya Singh",
     phone: "9876543212",
     email: "priya.google@gmail.com",
-    source: "Google Ads",
+    source: "Google",
     campaignName: "Search Campaign",
   },
   {
     name: "Rohit Kumar",
     phone: "9876543213",
     email: "rohit.google@gmail.com",
-    source: "Google Ads",
+    source: "Google",
     campaignName: "Brand Campaign",
   },
 ];

@@ -30,8 +30,7 @@ export const authMiddleware = (
       process.env.JWT_SECRET as string
     ) as { userId: number };
 
-    req.user = decoded;
-
+    (req as any).user = decoded;
     next();
   } catch (error) {
     res.status(401).json({

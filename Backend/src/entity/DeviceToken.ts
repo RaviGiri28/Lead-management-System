@@ -5,8 +5,8 @@ export class DeviceToken {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
-  userId!: number;
+  @Column({ nullable: true })
+  userId?: number;
 
   @Column({ unique: true })
   token!: string;

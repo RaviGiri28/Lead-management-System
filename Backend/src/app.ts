@@ -5,7 +5,7 @@ import integrationRoutes from './routes/integrationRoutes';
 import analyticsRoutes from "./routes/analyticsRoutes";
 import authRoutes from "./routes/authRoutes";
 import fcmRoutes from "./routes/fcmRoutes";
-
+import notificationRoutes from './routes/Notification.routes'
 
 const app = express();
 
@@ -21,4 +21,5 @@ app.use("/api/leads", leadRoutes);
 app.use("/api", integrationRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/fcm", fcmRoutes);
+app.use("/api/notifications", notificationRoutes);
 export default app;

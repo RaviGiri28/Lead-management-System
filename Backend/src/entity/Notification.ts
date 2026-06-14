@@ -7,14 +7,14 @@ export class Notification {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({default: "new"})
   type: string;       // 'new_lead', 'followup', 'summary', 'converted'
 
   @Column()
   title: string;
 
-  @Column()
-  body: string;
+  @Column({ nullable: true })
+  message: string;
 
   @Column({ nullable: true })
   source: string;     // 'Meta', 'Google', null

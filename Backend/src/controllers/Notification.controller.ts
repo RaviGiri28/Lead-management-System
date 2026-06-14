@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { AppDataSource } from '../config/data-source';
-import { Notification } from '../entities/notification';
+import { Notification } from '../entity/Notification';
 import { AuthRequest } from '../middleware/authMiddleware';
 
 const notifRepo = () => AppDataSource.getRepository(Notification);
@@ -11,7 +11,7 @@ export const getAllNotifications = async (req: AuthRequest, res: Response): Prom
     const { read } = req.query as Record<string, string>;
 
     const where: any = {};
-    if (read === 'true')  where.read = true;
+    if (read === 'true') where.read = true;
     if (read === 'false') where.read = false;
 
     const notifications = await notifRepo().find({
@@ -33,8 +33,9 @@ export const getAllNotifications = async (req: AuthRequest, res: Response): Prom
 // ─── PATCH /api/notifications/:id/read ───────────────────────────────────────
 export const markAsRead = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const notif = await notifRepo().findOne({ where: { id: parseInt(req.params.id) } });
-    if (!notif) {
+    const notif = await notifRepo().findOne({
+      where: { id: Number(req.params.id) }
+    }); if (!notif) {
       res.status(404).json({ success: false, message: 'Notification not found.' });
       return;
     }

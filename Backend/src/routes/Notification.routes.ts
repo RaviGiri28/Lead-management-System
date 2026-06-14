@@ -3,10 +3,8 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import { getAllNotifications, markAllAsRead, markAsRead } from '../controllers/Notification.controller';
 const router = Router();
 
-router.use(authMiddleware);
-
-router.get('/',                getAllNotifications);
-router.patch('/read-all',      markAllAsRead);
-router.patch('/:id/read',      markAsRead);
+router.get('/', authMiddleware, getAllNotifications);
+router.patch('/read-all', authMiddleware, markAllAsRead);
+router.patch('/:id/read', authMiddleware, markAsRead);
 
 export default router;
